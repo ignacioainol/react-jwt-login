@@ -1,27 +1,45 @@
 import React, { Component } from 'react'
-import  {getJwt} from './../helpers/jwt';
+import { getJwt } from './../helpers/jwt';
+import { withRouter } from 'react-router-dom';
+import axios from 'axios'
+
 
 class Authenticated extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            user:undefined
+            user: undefined
         }
     }
 
-    componentDidMount(){
+    componentDidMount() {
         const jwt = getJwt();
-        if(!jwt){
+        if (!jwt) {
             this.props.history.push('/login');
         }
+
+        axios.get('http://localhost:3005/v1/users/getUser', { headers: { Authorization: `Bearer ${jwt}` } })
+        .then(res => this.setState({
+            user: res.data
+        }))
+        // .catch(err => {
+        //     localStorage.removeItem('cyrax-jwt');
+        //     this.props.history.push('/login');
+        // })
     }
 
+
     render() {
+        if (this.state.user === undefined) {
+            return <div>Loading ...</div>
+        }
         return (
-            <div>Hello from auth</div>
+            <div>
+                {this.props.children}
+            </div>
         )
     }
 }
 
-export default Authenticated;
+export default withRouter(Authenticated);

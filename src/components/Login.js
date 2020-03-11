@@ -25,7 +25,10 @@ class Login extends Component {
         axios.post('http://localhost:3005/v1/users/login', {
             email: this.state.email,
             password: this.state.password
-        }).then(res => localStorage.setItem('cyrax-jwt', res.data));
+        }).then(res => {
+            localStorage.setItem('cyrax-jwt', res.data);
+            this.props.history.push('/protected');
+        });
     }
 
     render() {
